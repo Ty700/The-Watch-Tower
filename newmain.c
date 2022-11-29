@@ -55,7 +55,7 @@
 #define _XTAL_FREQ 16000000.0    /*for 16mhz*/
 #define I2C_SLAVE 0x27
 
-
+//Function Pre-load
 void setup_comms(void);
 void putch(unsigned char);
 unsigned char getch(void);
@@ -75,6 +75,8 @@ unsigned int Pval, Temp, FVval, Phval, light;
 double Ctemp, FTemp;  
 float Temperature, Voltage, distance; //Temp is an unsigned int  
 
+
+//Main Function
 int main(int argc, char** argv) {
     unsigned int Time, j,i;
     int Dist; 
@@ -102,7 +104,7 @@ int main(int argc, char** argv) {
 	I2C_LCD_Init(I2C_SLAVE); //pass I2C_SLAVE to the init function to create an instance
     setup_comms();	// set up the USART - settings defined in usart.h 
 //************************************ LOOP ************************
-    while (1){
+    while (1){ //inf loop
 //  Start Ping Sensor
         RA2 = 0;
         TMR1H = 0;
@@ -120,9 +122,7 @@ int main(int argc, char** argv) {
         RA5 ^= 0x01;    //Toggles the LED to help with debugging
         for (j=0; j<0x50; j++);  //  Add a bit of delay here        
         
-        
-/************************************ MY ADDITIONS FROM HERE ON ************************/
-        
+               
 // Get set up for A2D  
     ADCON1 = 0xC0; //Right justify and Fosc/4 and Vss and Vdd references  
     
@@ -198,8 +198,6 @@ int main(int argc, char** argv) {
               sprintf(Sout, "Light=%d", light);
        I2C_LCD_SWrite(I2C_SLAVE, Sout, strlen(Sout));
        __delay_ms(1000.0);
-       
-/************************************ END OF MY ADDITIONS ************************/
     }
     RA5Blink();
     return (EXIT_SUCCESS);
