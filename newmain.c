@@ -1,6 +1,6 @@
    /*
  * Project: The Watch Tower
- * Author: Tyler Scotti
+ * Author: Group 24
  * Purpose: Uses a PIC16F1829 and will output:
     * 1. The surrounding room temperature 
     * 2. The amount of light in the area
@@ -11,13 +11,13 @@
  * Created on November 28, 2022, 11:45 PM
  */
 #include <xc.h>  
-#include <math.h> 
+#include <math.h> // My addition
 #include <stdio.h>  
 #include <stdlib.h>  
-#include <string.h>
-#include  "i2c.h"
-#include  "i2c_LCD.h
-#include <pic16f1829.h>
+#include <string.h>//My addition
+#include  "i2c.h"//My addition
+#include  "i2c_LCD.h"//My addition
+#include <pic16f1829.h>//My addition
 
 // PIC16F1829 Configuration Bit Settings
 
@@ -53,33 +53,31 @@
 #define RX_PIN TRISC5
 #define TX_PIN TRISC4
 #define _XTAL_FREQ 16000000.0    /*for 16mhz*/
-#define I2C_SLAVE 0x27
+#define I2C_SLAVE 0x27 // My addition
 
-//Function Pre-load
+
 void setup_comms(void);
 void putch(unsigned char);
 unsigned char getch(void);
 unsigned char getche(void);
-void RA5Blink(void);  
-void pinConfig(void); 
-void I2C_LCD_Command(unsigned char,unsigned char);
-void I2C_LCD_SWrite(unsigned char,unsigned char *, char);
-void I2C_LCD_Init(unsigned char);
-void I2C_LCD_Pos(unsigned char,unsigned char);
-unsigned char I2C_LCD_Busy(unsigned char);
-int calc_distance(void);
+void RA5Blink(void);  //My addition
+void pinConfig(void); //My addition
+void I2C_LCD_Command(unsigned char,unsigned char);//My addition
+void I2C_LCD_SWrite(unsigned char,unsigned char *, char);//My addition
+void I2C_LCD_Init(unsigned char);//My addition
+void I2C_LCD_Pos(unsigned char,unsigned char);//My addition
+unsigned char I2C_LCD_Busy(unsigned char);//My addition
+int calc_distance(void);//My addition
 
 
- /*Global Vars  */ 
+ /*Global Vars ALL MY ADDITIONS */ 
 unsigned int Pval, Temp, FVval, Phval, light;  
 double Ctemp, FTemp;  
 float Temperature, Voltage, distance; //Temp is an unsigned int  
 
-
-//Main Function
 int main(int argc, char** argv) {
     unsigned int Time, j,i;
-    int Dist; 
+    int Dist; //My addition - Changed float to int
     T1CON =   0X25;     //set up Tmr1 for gate control Pin RA4
     T1GCON =  0XC0;
     TRISA5 = 0;     //LED
@@ -93,18 +91,18 @@ int main(int argc, char** argv) {
     TRISC   = 0xFF;     //all PortC as input?
     LATC    = 0x00;   /* zero out */
     INTCON  =0;	// purpose of disabling the interrupts.
-    char  Sout[16];
-	unsigned char * Sptr; 
+    char  Sout[16]; //My addition
+	unsigned char * Sptr; //My addition
     FVRCON = 0xA2;
     TSEN = 1; //enable module
     TSRNG = 0; //Select lower range that will work with void as low as 1.8V
     //LCD Output Variables    
-	Sptr = Sout; 
-    i2c_Init();				// Start I2C as Master 100KH 
-	I2C_LCD_Init(I2C_SLAVE); //pass I2C_SLAVE to the init function to create an instance
+	Sptr = Sout; //My addition
+    i2c_Init();				// Start I2C as Master 100KH //My addition
+	I2C_LCD_Init(I2C_SLAVE); //pass I2C_SLAVE to the init function to create an instance //My addition
     setup_comms();	// set up the USART - settings defined in usart.h 
 //************************************ LOOP ************************
-    while (1){ //inf loop
+    while (1){
 //  Start Ping Sensor
         RA2 = 0;
         TMR1H = 0;
@@ -122,7 +120,9 @@ int main(int argc, char** argv) {
         RA5 ^= 0x01;    //Toggles the LED to help with debugging
         for (j=0; j<0x50; j++);  //  Add a bit of delay here        
         
-               
+        
+/************************************ MY ADDITIONS FROM HERE ON ************************/
+        
 // Get set up for A2D  
     ADCON1 = 0xC0; //Right justify and Fosc/4 and Vss and Vdd references  
     
@@ -187,17 +187,19 @@ int main(int argc, char** argv) {
         I2C_LCD_Command(I2C_SLAVE, 0x01); //clear display
       __delay_ms(1000.0);
        I2C_LCD_Pos(I2C_SLAVE, 0x00); //Set position to start bottom line
-       sprintf(Sout, "Distance= %dcm",Dist);
+       sprintf(Sout, "Distance = %dcm",Dist);
        I2C_LCD_SWrite(I2C_SLAVE, Sout, strlen(Sout));
        __delay_ms(1000.0);
        I2C_LCD_Pos(I2C_SLAVE, 0x40); //Set position to start bottom line
-       sprintf(Sout, "Temp= %.0fF",FTemp);
+       sprintf(Sout, "Temp = %.0fF",FTemp);
        I2C_LCD_SWrite(I2C_SLAVE, Sout, strlen(Sout));
        __delay_ms(1000.0);
        I2C_LCD_Command(I2C_SLAVE, 0x01); //clear display
-              sprintf(Sout, "Light=%d", light);
+              sprintf(Sout, "Light = %d", light);
        I2C_LCD_SWrite(I2C_SLAVE, Sout, strlen(Sout));
        __delay_ms(1000.0);
+       
+/************************************ END OF MY ADDITIONS ************************/
     }
     RA5Blink();
     return (EXIT_SUCCESS);
@@ -212,7 +214,7 @@ void setup_comms(void){
         SYNC = 0;
         SPEN = 1;
         BRGH = 1;
-        CREN = 1; 
+        CREN = 1; //My addition
 }
 
 void putch(unsigned char byte)
@@ -239,7 +241,7 @@ getche(void)
 	return c;
 }
 
-
+//My addition
 void pinConfig(void)  {  
  OSCCON = 0x6A; /* b6..4 = 1101 = 4MHz */  
  TXCKSEL = 1; // both bits in APFCON0 MUST BE 1 for 1829 0 for 1825  
@@ -253,7 +255,7 @@ void pinConfig(void)  {
     ANSELB =0xF0;
     INTCON = 0; // purpose of disabling the interrupts.  
   }  
-
+//My addition
 void RA5Blink(void)  {  
     RA5 ^= 0x01; // Toggles the LED to help with debugging  
     __delay_ms(200);   
