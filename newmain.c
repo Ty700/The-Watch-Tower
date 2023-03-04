@@ -70,7 +70,7 @@ unsigned char I2C_LCD_Busy(unsigned char);
 int calc_distance(void);
 
 
- /*Global Vars ALL MY ADDITIONS */ 
+ /*Global Vars */ 
 unsigned int Pval, Temp, FVval, Phval, light;  
 double Ctemp, FTemp;  
 float Temperature, Voltage, distance; //Temp is an unsigned int  
