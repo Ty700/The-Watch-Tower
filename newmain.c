@@ -1,6 +1,6 @@
    /*
  * Project: The Watch Tower
- * Author: Group 24
+ * Author: Tyler Scotti
  * Purpose: Uses a PIC16F1829 and will output:
     * 1. The surrounding room temperature 
     * 2. The amount of light in the area
@@ -11,7 +11,7 @@
  * Created on November 28, 2022, 11:45 PM
  */
 #include <xc.h>  
-#include <math.h> // My addition
+#include <math.h>
 #include <stdio.h>  
 #include <stdlib.h>  
 #include <string.h>
@@ -53,7 +53,7 @@
 #define RX_PIN TRISC5
 #define TX_PIN TRISC4
 #define _XTAL_FREQ 16000000.0    /*for 16mhz*/
-#define I2C_SLAVE 0x27 // My addition
+#define I2C_SLAVE 0x27
 
 
 void setup_comms(void);
